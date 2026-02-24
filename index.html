@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación FESP - Tablero de Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-detail { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">EVALUACIÓN DE FUNCIONES ESENCIALES DE SALUD PÚBLICA (FESP)</h1>
+            <p class="text-slate-500 mt-2">Jurisdicción Sanitaria No. 6</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                    <span>Avance Jurisdiccional</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <div id="stat-average" class="text-2xl font-bold">0%</div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3">
+                    <div id="stat-average-bar" class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                    <span>FESP al 100%</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <div id="stat-completed" class="text-2xl font-bold text-emerald-600">0</div>
+                <p class="text-xs text-slate-400 mt-2">Cumplimiento total alcanzado</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                    <span>Áreas Críticas</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+                <div id="stat-critical" class="text-2xl font-bold text-rose-600">0</div>
+                <p class="text-xs text-slate-400 mt-2">Menos del 70% de avance</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6" id="filters">
+            <button data-filter="all" class="px-4 py-2 rounded-full text-sm font-medium transition bg-slate-800 text-white shadow-sm">Todas</button>
+            <button data-filter="optimal" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Óptimas (90-100%)</button>
+            <button data-filter="critical" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Críticas (<70%)</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-4" id="fesp-list"></div>
+
+            <div class="lg:col-span-1">
+                <div id="detail-panel" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-8 min-h-[400px]">
+                    <div id="detail-empty" class="py-20 text-center">
+                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <p class="text-slate-500 font-medium">Selecciona una función para ver el detalle estructurado</p>
+                    </div>
+                    <div id="detail-content" class="hidden animate-detail"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fespData = [
+            { id: 1, name: "FESP 1: Monitoreo y evaluación", score: "15 de 15", percent: 100, items: "1, 2, 10", evidence: "Diagnóstico de salud, Plan anual, COJUVE (Minutas, Actas, Calendario), Servicios Médicos(Avances en Excel, superviciones).", description: "Se cuenta con ASIS actualizado, se socializa con autoridades distritatles y estatales, se identifican uno o mas mecanismos distritales para convocar, gestionar y tomar decisiones donde participan todos los provedores de servicios de atención médica, se generan acuerdos y se da seguimiento.", recommendation: "Mantener y fortalecer los mecanismos actuales de monitoreo y evaluación.", color: "bg-blue-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>` },
+            { id: 2, name: "FESP 2: Vigilancia, control y gestión de riesgos", score: "30 de 30", percent: 100, items: "3, 4, 5, 6, 7, 11", evidence: " Vigilancia: Capturas SIC/SICAM, Boletines, Panorama Dengue, Suive, Fotos de Bloqueos, Capturas de WhatsApp, Bitacoras de cloro.", description: "Análisis y Toma de Decisiones: Utiliza sistemas de información convencionales, especiales y fuentes externas para generar canales endémicos (semanales o mensuales) que evalúan el impacto de las intervenciones. Comunicación y Difusión: Notifica oportunamente a proveedores de salud, otros sectores y a la población general sobre el panorama epidemiológico. Control de Brotes: Implementa mecanismos de seguimiento y respuesta inmediata para la conción, mitigación y control de eventos sanitarios", recommendation: "Mantener los procesos de vigilancia epidemiologica.", color: "bg-emerald-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>` },
+            { id: 3, name: "FESP 3: Investigación y gestión del conocimiento", score: "04 de 10", percent: 40, items: "8, 9", evidence: "Protocolos de investigación, Proyectos, Convocatorias.", description: "Limitada producción de investigación y falta de asignación de recursos económicos específicos.", recommendation: "Fortalecer el estimulo jurisdiccional con convocatorias, programas de reconocimiento y acompañamiento, e involucrar al personal multidisciplinario.", color: "bg-red-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>` },
+            { id: 4, name: "FESP 4: Políticas, legislación y marcos regulatorios", score: "20 de 20", percent: 100, items: "13, 15, 17, 21", evidence: "Participación Social: Logistica Dengue/Salud Reproductiva, perifoneo, Mapeo Dengue/EFE, Plan de nebulización 2025, Cronograma de talleres.", description: "Se identifican políticas públicas de salud colectiva, que el Distrito de Salud conoce e implementa y tiene identificados recursos económicos y humanos específicos para su desarrollo acorde al territorio en el que se lleva, otorgados por el nivel Estatal, por otras instituciones del sector salud y también por otros actores del nivel local (ONG's, nivel colonia, vecinos, etc.). Se impulsan iniciativas de equidad en salud, se promueve la participación de grupos marginalizados y minorizados en el sector involucrando a otros sectores, con la participación de personal gerencial del Distrito de Salud para el Bienestar, otras instituciones del sector salud, así como de otros sectores y se tienen acuerdos y compromisos con seguimiento. El Distrito de Salud para el Bienestar cuenta con un registro de activos mapeados y se integran en los planes de actuación territorial, tanto en abordaje de daños a la salud, como acciones que generan salud y bienestar, fomentando acciones que fortalezcan y desarrolle nuevos activos en el territorio. Los Municipios del Distrito cuentan con un Comité Intersectorial Municipal, integran a otros sectores y sesionan de manera trimestral y tienen como base la integración y planes de acción de un diagnóstico de salud municipal.", recommendation: "Promover y fortalecer los mecanismos de colaboración multisectorial.", color: "bg-indigo-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 7v14"></path><path d="M9 21h6"></path><path d="M16 4h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-4"></path><path d="M4 4h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4"></path><path d="M8 4V2"></path><path d="M16 4V2"></path></svg>` },
+            { id: 5, name: "FESP 5: Participación y movilización social", score: "30 de 30", percent: 100, items: "12, 14, 16, 18, 19, 20", evidence: " Planificación: Actas COJUVE e intersectorial, Diagnostico Situacional, Proyectos Eliminación Masiva de Criaderos, Agentes Voluntarias, comunidades Saludables.", description: "Se identifican mecanismos para convocar a otras instituciones del sector y se utilizan en la operación de políticas en salud, con el sector y otros sectores y se tiene seguimiento a los acuerdos y compromisos generados. Se identifican Brechas, se tienen indicadores base y metas, se tiene un plan de acción para reducir las brechas y se da seguimiento. El Distrito de Salud cuenta con mecanismos de participación social integrados a un Plan Distrital de Trabajo y los resultados de estos mecanismos son integrados en la definición de brechas y planes de actuación del equipo gerencial del distrito y se da seguimiento puntual. Se identifican líderes comunitarios en el Distrito de Salud para el Bienestar y se tiene un plan de formación y capacitación en temas de daños a la salud y habilidades de gestión, empoderamiento y participación social. Además, los líderes comunitarios ya capacitados, avanzan en formar nuevos líderes en territorio. Se identifican talleres o sesiones de Educación para la Salud, para la comunidad del territorio en temas para la toma de conciencia crítica a favor de la salud y bienestar, basados en la acción y rescate y valorización de saberes locales. Se tiene integrado un registro de organizaciones o movimientos de la sociedad civil. Se utiliza en los planes de acción territorial del Distrito..", recommendation: "Fortalecer la planeación local en salud con enfoque comunitaria.", color: "bg-purple-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>` },
+            { id: 6, name: "FESP 6: Desarrollo de recursos humanos para la salud", score: "10 de 10", percent: 100, items: "23, 25", evidence: "Capacitación: PEC, Diagnóstico de necesidades, Retroalimentación COJUVA, Evidencia con Instituciones (TEC, OPS, Consejo NL).", description: "Se evalúan trimestralmente las necesidades y se capacita al personal de salud en el Distrito, tanto del componente de salud colectiva y del componente de atención médica del sector público y privado, teniendo una retroalimentación de estos elementos con todo el sector. Se tiene colaboración con 3 o más instituciones académicas estatales, nacionales e internacionales para la capacitación y formación de profesionales de la salud del Distrito.", recommendation: "Reforzar procesos de planeación estratégica en capacitación y evaluación de competencias laborales con equidad.", color: "bg-cyan-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>` },
+            { id: 7, name: "FESP 7: Medicamentos y otras tecnologías", score: "14 de 15", percent: 93.33, items: "26, 28, 30", evidence: "Medicamentos/Insumos: Plan Anual, Kardex (FASA, INSABI), Vales de entrega, PNO, Licencia Sanitaria, Supervisiones de botica.", description: "El uso de las tecnologías de la información es funcional y tiene valor, se utilizan en la toma de decisiones y da origen a un plan de trabajo. Se cuenta con una metodología para analizar las cadenas de suministro y logística de los insumos para la atención médica y salud colectiva en el territorio del Distrito de Salud para el Bienestar correspondiente, utilizando tanto para el componente de salud colectiva, como en el de atención médica, pero, no participa de este análisis todo el sector salud. 100% de los insumos almacenados cumplen con lo establecido según las evaluaciones con apego a las NOM y programado para la distribución eficiente.", recommendation: "Conservar la estandarización de procesos en cadena de suministros y tecnologias de la Salud para mantener los mecanismos de control de calidad y trazabilidad.", color: "bg-orange-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>` },
+            { id: 8, name: "FESP 8: Financiamiento de la salud", score: "13 de 20", percent: 65, items: "22, 24, 27, 29", evidence: "Recurso Humano: Informe Clima Laboral, Padrón de Sinerhias, Directorio Sector Público, Nómina/Asistencia de RH (SANAS).", description: "Se cuenta con Diagnóstico situacional de profesionales de salud para la atención, pero solo de la salud colectiva en el Distrito de Salud para el Bienestar, no del personal de las unidades de atención médica. El personal de las unidades del distrito, conoce el ASIS o Diagnóstico Municipal de Salud, y asignan o definen recursos para desarrollo de estrategias, en coordinación con otras instituciones del sector salud y de otros sectores. Se conoce la cantidad, ubicación y condiciones de las unidades de infraestructura para la salud colectiva y la atención médica, pero solo del sector público, en el DSB. Los Distritos de Salud para el Bienestar, identifican o cuantifican el recurso para incidir en las brechas de salud identificadas en su territorio y se realiza una asignación presupuestal pero solo de nivel estatal.", recommendation: "Elaboración de un diagnóstico situacional de profesionales de la salud de atención médica y salud colectiva como de las unidades donde laboran, públicas, privadas, consultorios anexos a farmacia y de medicina tradicional.", color: "bg-amber-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>` },
+            { id: 9, name: "FESP 9: Acceso a servicios integrales y de calidad", score: "18 de 40", percent: 45, items: "31, 32, 33, 34, 35, 36, 37, 39", evidence: "Servicios de Salud: Avisos funcionamiento, Población CONAPO, Cero Rechazo, Metas VIH/SIDA, Cuadernillo Autoevaluación, INDICAS.", description: "Se realiza evaluación del acceso a los servicios de salud colectiva, pero no en todo el sector. Se realiza evaluación del acceso a los servicios de atención médica, pero no en todo el sector. Cuenta con el 100% del directorio de los prestadores de servicios públicos de salud actualizado. Se tiene un mecanismo distrital que garantice el acceso a los servicios de atención médica, pero no se utiliza en la toma de decisiones con todo el sector. Se tiene una metodología para evaluar la condición del acceso a los servicios de salud colectiva para población en condición de vulnerabilidad, pero no se aplica. Se aplica una metodología que evalúe la calidad de los servicios de atención médica que se otorgan, considera la participación activa de los usuarios en la evaluación, pero solo para población sin derechohabiencia. Se cuenta con el mecanismo de núcleos internos de regulación en cada unidad de salud del distrito y se realiza una operación de coordinación distrital para responder a la demanda de atención médica, pero solo en una institución del sector público.", recommendation: "Involucrar al sector privado y medicina tradicional para ampliar cobertura. Directorio de establecimientos con aviso de funcionamiento en el DSB (públicos y privados). Políticas públicas a las que se integran los prestadores de servicios. Excel, bases de datos, registros o plataformas del SNSP. Se sugiere solicitar, además, los reportes de los NIR. Documento para evaluación de acceso, lineamientos o documento de estrategia. Documentos/Fuente de las evaluaciones, Herramienta de evaluación y cédulas de supervisión, evidencia de solicitud de vinculación con otras instituciones del sector. Elaborar base de datos y registros de demanda de atención médica y calidad de los servicios del sector público, privado y medicina tradicional.", color: "bg-rose-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>` },
+            { id: 10, name: "FESP 10: Promoción de la salud y comportamientos saludables", score: "10 de 10", percent: 100, items: "40, 43", evidence: "Calidad: Comunidades Saludables 2025, Evidencia fotográfica de brigadas, Certificación de comunidades.", description: "Se tiene una estrategia distrital para la creación de entornos de salud y bienestar, la cual se gestiona con el personal del distrito de salud, gobiernos locales, instancias relacionadas con el desarrollo local y con la participación activa de la localidad. Se desarrolla en el Distrito, procesos que inciden en las condiciones sociales para una buena calidad de vida, desde una perspectiva de resiliencia y salutogénica, participando personal del Distrito de Salud para el Bienestar, el sector salud y otros sectores (incluyendo el social).", recommendation: "Mantener y fortalecer la innovación en estrategias de promocíon de entornos saludables.", color: "bg-pink-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>` },
+            { id: 11, name: "FESP 11: Abordaje de los determinantes sociales de la salud", score: "14 de 15", percent: 93.33, items: "38, 41, 42", evidence: "Emergencias/Desastres: Manual de Organización, Plan Contingencia ERRa, PNO contingencias, Mapas de riesgo 2025, POA Paludismo.", description: "El Distrito de Salud para el Bienestar, cuenta con un modelo de resiliencia para trabajar de manera coordinada con el Sector Salud en su ámbito distrital de correspondencia, tanto ámbito público como privado, pero si integra medicina tradicional. Se tiene una estrategia distrital que evalúa y fortalece la acción intersectorial en el territorio, está vinculada a las brechas o procesos de salud pública distrital que atiende prioridades identificadas en el territorio, pero no tiene seguimiento y continúa (se mantiene en el tiempo). Se identifica en el distrito, una metodología para analizar los determinantes sociales de la salud en el territorio, la cual se lleva a cabo con el equipo gerencial distrital, el sector salud y con otros sectores.", recommendation: "Fortalecer la acción intersectorial en territorios vulnerables: Integrar la medicina tradicional.", color: "bg-teal-500", icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>` }
+        ];
+
+        let currentFilter = 'all';
+        let selectedId = null;
+
+        function renderStats() {
+            const avg = (fespData.reduce((acc, curr) => acc + curr.percent, 0) / fespData.length).toFixed(1);
+            const completed = fespData.filter(f => f.percent === 100).length;
+            const critical = fespData.filter(f => f.percent < 70).length;
+
+            document.getElementById('stat-average').innerText = `${avg}%`;
+            document.getElementById('stat-average-bar').style.width = `${avg}%`;
+            document.getElementById('stat-completed').innerText = completed;
+            document.getElementById('stat-critical').innerText = critical;
+        }
+
+        function renderList() {
+            const listContainer = document.getElementById('fesp-list');
+            listContainer.innerHTML = '';
+
+            const filtered = fespData.filter(f => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'optimal') return f.percent >= 90;
+                if (currentFilter === 'critical') return f.percent < 70;
+                return true;
+            });
+
+            filtered.forEach(fesp => {
+                const isActive = fesp.id === selectedId;
+                const card = document.createElement('div');
+                card.className = `group bg-white p-5 rounded-2xl shadow-sm border transition-all cursor-pointer flex items-center gap-4 ${isActive ? 'border-blue-500 ring-2 ring-blue-50' : 'border-slate-100 hover:border-blue-200'}`;
+                
+                const barColor = fesp.percent === 100 ? 'bg-emerald-500' : fesp.percent < 70 ? 'bg-rose-500' : 'bg-blue-500';
+
+                card.innerHTML = `
+                    <div class="${fesp.color} p-3 rounded-xl text-white shadow-sm">
+                        ${fesp.icon}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-slate-800 truncate text-sm md:text-base">${fesp.name}</h3>
+                        <div class="flex items-center gap-3 mt-1">
+                            <div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-1000 ${barColor}" style="width: ${fesp.percent}%"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 w-10 text-right">${fesp.percent}%</span>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-300 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                `;
+
+                card.onclick = () => selectFesp(fesp.id);
+                listContainer.appendChild(card);
+            });
+        }
+
+        function selectFesp(id) {
+            selectedId = id;
+            renderList();
+            const fesp = fespData.find(f => f.id === id);
+            
+            const emptyState = document.getElementById('detail-empty');
+            const contentState = document.getElementById('detail-content');
+            
+            emptyState.classList.add('hidden');
+            contentState.classList.remove('hidden');
+
+            // --- ESTRUCTURACIÓN DINÁMICA SIN ALTERAR TEXTO ---
+            // Divide por puntos para crear lista en Situación Actual
+            const formattedDescription = fesp.description
+                .split('. ')
+                .filter(s => s.trim().length > 0)
+                .map(s => `<li class="mb-2 pl-1">${s.trim()}${s.endsWith('.') ? '' : '.'}</li>`)
+                .join('');
+
+            // Divide por puntos para crear lista en Recomendación
+            const formattedRecommendation = fesp.recommendation
+                .split('. ')
+                .filter(r => r.trim().length > 0)
+                .map(r => `<div class="flex gap-2 mb-2"><span>•</span><span>${r.trim()}${r.endsWith('.') ? '' : '.'}</span></div>`)
+                .join('');
+
+            contentState.innerHTML = `
+                <div class="flex items-start justify-between mb-6">
+                    <div class="${fesp.color} p-4 rounded-2xl text-white shadow-lg">
+                        ${fesp.icon}
+                    </div>
+                    <div class="text-right">
+                        <span class="text-3xl font-bold text-slate-800">${fesp.percent}%</span>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Cumplimiento</p>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-bold text-slate-800 mb-2 leading-tight">${fesp.name}</h2>
+                <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 mb-6 border border-blue-100">
+                    Items: ${fesp.items}
+                </div>
+
+                <div class="space-y-6">
+                    <section>
+                        <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Puntaje Obtenido</h4>
+                        <p class="text-slate-700 font-bold text-xl">${fesp.score}</p>
+                    </section>
+
+                    <section>
+                        <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Situación Actual</h4>
+                        <ul class="text-slate-600 text-sm leading-relaxed list-disc ml-4">
+                            ${formattedDescription}
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Evidencia Requerida</h4>
+                        <div class="bg-slate-50 p-3 rounded-xl text-xs text-slate-500 border border-slate-100 italic">
+                            ${fesp.evidence}
+                        </div>
+                    </section>
+
+                    <section class="pt-5 border-t border-slate-100">
+                        <h4 class="text-[11px] font-bold text-blue-500 uppercase tracking-widest mb-3">Recomendación Estratégica</h4>
+                        <div class="bg-blue-50/50 p-4 rounded-xl text-sm text-blue-900 leading-snug">
+                            ${formattedRecommendation}
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        // Eventos de Filtro
+        document.getElementById('filters').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            document.querySelectorAll('#filters button').forEach(b => {
+                b.className = "px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50";
+            });
+
+            btn.className = btn.dataset.filter === 'optimal' ? "px-4 py-2 rounded-full text-sm font-medium transition bg-emerald-600 text-white shadow-sm" : 
+                            btn.dataset.filter === 'critical' ? "px-4 py-2 rounded-full text-sm font-medium transition bg-rose-600 text-white shadow-sm" :
+                            "px-4 py-2 rounded-full text-sm font-medium transition bg-slate-800 text-white shadow-sm";
+
+            currentFilter = btn.dataset.filter;
+            renderList();
+        });
+
+        window.onload = () => {
+            renderStats();
+            renderList();
+        };
+    </script>
+</body>
+</html>
