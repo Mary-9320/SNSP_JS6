@@ -23,58 +23,103 @@
             <p class="text-slate-500 mt-2">Jurisdicción Sanitaria No. 6</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
-                    <span>Avance Jurisdiccional</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                </div>
-                <div id="stat-average" class="text-2xl font-bold">0%</div>
-                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3">
-                    <div id="stat-average-bar" class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
+        <nav class="flex space-x-8 border-b border-slate-200 mb-8" aria-label="Tabs">
+            <button id="btn-tab-dashboard" onclick="switchTab('dashboard')" class="border-blue-500 text-slate-900 border-b-2 py-4 px-1 text-sm font-medium transition-colors">
+                Tablero de Control
+            </button>
+            <button id="btn-tab-drive" onclick="switchTab('drive')" class="border-transparent text-slate-500 hover:border-slate-300 py-4 px-1 text-sm font-medium flex items-center gap-2 transition-colors">
+                <span style="background: linear-gradient(90deg, #1AA260 0%, #1AA260 25%, #F4B400 25%, #F4B400 50%, #DB4437 50%, #DB4437 75%, #4285F4 75%, #4285F4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; font-size: 1.05rem;">
+                    GOOGLE DRIVE
+                </span>
+            </button>
+        </nav>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
-                    <span>FESP al 100%</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <div id="stat-completed" class="text-2xl font-bold text-emerald-600">0</div>
-                <p class="text-xs text-slate-400 mt-2">Cumplimiento total alcanzado</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
-                    <span>Áreas Críticas</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                </div>
-                <div id="stat-critical" class="text-2xl font-bold text-rose-600">0</div>
-                <p class="text-xs text-slate-400 mt-2">Menos del 70% de avance</p>
-            </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2 mb-6" id="filters">
-            <button data-filter="all" class="px-4 py-2 rounded-full text-sm font-medium transition bg-slate-800 text-white shadow-sm">Todas</button>
-            <button data-filter="optimal" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Óptimas (90-100%)</button>
-            <button data-filter="critical" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Críticas (<70%)</button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 space-y-4" id="fesp-list"></div>
-
-            <div class="lg:col-span-1">
-                <div id="detail-panel" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-8 min-h-[400px]">
-                    <div id="detail-empty" class="py-20 text-center">
-                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <p class="text-slate-500 font-medium">Selecciona una función para ver el detalle estructurado</p>
+        <div id="dashboard-content" class="block animate-detail">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                        <span>Avance Jurisdiccional</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                     </div>
-                    <div id="detail-content" class="hidden animate-detail"></div>
+                    <div id="stat-average" class="text-2xl font-bold">0%</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3">
+                        <div id="stat-average-bar" class="bg-blue-500 h-1.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                        <span>Avance Estatal</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </div>
+                    <div class="text-2xl font-bold">85.66%</div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3">
+                        <div class="bg-amber-500 h-1.5 rounded-full" style="width: 85.66%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                        <span>FESP al 100%</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div id="stat-completed" class="text-2xl font-bold text-emerald-600">0</div>
+                    <p class="text-xs text-slate-400 mt-2">Cumplimiento total alcanzado</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-2 text-slate-500 text-sm font-medium">
+                        <span>Áreas Críticas</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <div id="stat-critical" class="text-2xl font-bold text-rose-600">0</div>
+                    <p class="text-xs text-slate-400 mt-2">Menos del 70% de avance</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-6" id="filters">
+                <button data-filter="all" class="px-4 py-2 rounded-full text-sm font-medium transition bg-slate-800 text-white shadow-sm">Todas</button>
+                <button data-filter="optimal" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Óptimas (90-100%)</button>
+                <button data-filter="critical" class="px-4 py-2 rounded-full text-sm font-medium transition bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">Críticas (<70%)</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-4" id="fesp-list"></div>
+
+                <div class="lg:col-span-1">
+                    <div id="detail-panel" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-8 min-h-[400px]">
+                        <div id="detail-empty" class="py-20 text-center">
+                            <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <p class="text-slate-500 font-medium">Selecciona una función para ver el detalle estructurado</p>
+                        </div>
+                        <div id="detail-content" class="hidden animate-detail"></div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div id="drive-content" class="hidden animate-detail">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="https://drive.google.com/drive/folders/1kIm-yfkTUkdXopga-48pQmODlD_050Cv?usp=sharing" target="_blank" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-[#1AA260] transition-all flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">SUPERVISIÓN SNSP 2025</h2>
+                        <p class="text-sm text-slate-500 mt-2">Abrir carpeta en Google Drive</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#1AA260]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+                
+                <a href="https://drive.google.com/drive/folders/1lew-n98dorWAOsmCmCn1dbaPvqjKD2ur?usp=sharing" target="_blank" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-[#4285F4] transition-all flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">SUPERVISIÓN SNSP 2026</h2>
+                        <p class="text-sm text-slate-500 mt-2">Abrir carpeta en Google Drive</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#4285F4]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -217,6 +262,34 @@
             `;
         }
 
+        // Lógica de Pestañas Nueva
+        function switchTab(tab) {
+            const dashboardContent = document.getElementById('dashboard-content');
+            const driveContent = document.getElementById('drive-content');
+            const btnDashboard = document.getElementById('btn-tab-dashboard');
+            const btnDrive = document.getElementById('btn-tab-drive');
+
+            if (tab === 'dashboard') {
+                dashboardContent.classList.remove('hidden');
+                driveContent.classList.add('hidden');
+                
+                btnDashboard.classList.add('border-blue-500', 'text-slate-900');
+                btnDashboard.classList.remove('border-transparent', 'text-slate-500');
+                
+                btnDrive.classList.remove('border-slate-300');
+                btnDrive.style.borderBottomColor = 'transparent';
+            } else {
+                dashboardContent.classList.add('hidden');
+                driveContent.classList.remove('hidden');
+                
+                btnDashboard.classList.remove('border-blue-500', 'text-slate-900');
+                btnDashboard.classList.add('border-transparent', 'text-slate-500');
+                
+                // Muestra una línea de color azul claro debajo cuando drive está activo para resaltar
+                btnDrive.style.borderBottomColor = '#4285F4'; 
+            }
+        }
+
         // Eventos de Filtro
         document.getElementById('filters').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
@@ -241,3 +314,4 @@
     </script>
 </body>
 </html>
+
