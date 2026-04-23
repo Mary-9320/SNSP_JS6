@@ -118,7 +118,56 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#4285F4]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 </a>
             </div>
-        </div>
+
+            <div class="mt-8 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                    <h2 class="text-xl font-bold text-slate-800">ITEMS - PERSONAL RESPONSABLE</h2>
+                    <p class="text-sm text-slate-500 mt-1">Directorio de enlaces responsables por cada función esencial.</p>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 bg-white">
+                                <th class="py-4 px-6 text-sm font-semibold text-slate-600">Función / Item</th>
+                                <th class="py-4 px-6 text-sm font-semibold text-slate-600">Personal Responsable</th>
+                                <th class="py-4 px-6 text-sm font-semibold text-slate-600">Cargo / Área</th>
+                                <th class="py-4 px-6 text-sm font-semibold text-slate-600">Contacto</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm text-slate-700 bg-white">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <span class="font-medium text-slate-900 block">FESP 1: Monitoreo y evaluación</span>
+                                    <span class="text-xs text-slate-400">Items: 1, 2, 10</span>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-slate-800">Nombre del Responsable</td>
+                                <td class="py-4 px-6 text-slate-500">Jefatura de Epidemiología</td>
+                                <td class="py-4 px-6 text-blue-600 hover:underline cursor-pointer">correo@salud.gob.mx</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <span class="font-medium text-slate-900 block">FESP 2: Vigilancia, control y gestión</span>
+                                    <span class="text-xs text-slate-400">Items: 3, 4, 5, 6, 7, 11</span>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-slate-800">Nombre del Responsable</td>
+                                <td class="py-4 px-6 text-slate-500">Coordinación Médica</td>
+                                <td class="py-4 px-6 text-blue-600 hover:underline cursor-pointer">correo@salud.gob.mx</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <span class="font-medium text-slate-900 block">FESP 3: Investigación y gestión</span>
+                                    <span class="text-xs text-slate-400">Items: 8, 9</span>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-slate-800">Nombre del Responsable</td>
+                                <td class="py-4 px-6 text-slate-500">Área de Enseñanza</td>
+                                <td class="py-4 px-6 text-blue-600 hover:underline cursor-pointer">correo@salud.gob.mx</td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
 
     </div>
 
@@ -201,15 +250,12 @@
             emptyState.classList.add('hidden');
             contentState.classList.remove('hidden');
 
-            // --- ESTRUCTURACIÓN DINÁMICA SIN ALTERAR TEXTO ---
-            // Divide por puntos para crear lista en Situación Actual
             const formattedDescription = fesp.description
                 .split('. ')
                 .filter(s => s.trim().length > 0)
                 .map(s => `<li class="mb-2 pl-1">${s.trim()}${s.endsWith('.') ? '' : '.'}</li>`)
                 .join('');
 
-            // Divide por puntos para crear lista en Recomendación
             const formattedRecommendation = fesp.recommendation
                 .split('. ')
                 .filter(r => r.trim().length > 0)
@@ -262,7 +308,6 @@
             `;
         }
 
-        // Lógica de Pestañas Nueva
         function switchTab(tab) {
             const dashboardContent = document.getElementById('dashboard-content');
             const driveContent = document.getElementById('drive-content');
@@ -285,12 +330,10 @@
                 btnDashboard.classList.remove('border-blue-500', 'text-slate-900');
                 btnDashboard.classList.add('border-transparent', 'text-slate-500');
                 
-                // Muestra una línea de color azul claro debajo cuando drive está activo para resaltar
                 btnDrive.style.borderBottomColor = '#4285F4'; 
             }
         }
 
-        // Eventos de Filtro
         document.getElementById('filters').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -314,7 +357,6 @@
     </script>
 </body>
 </html>
-
 
 
 
